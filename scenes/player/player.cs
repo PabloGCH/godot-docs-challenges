@@ -3,19 +3,34 @@ using System;
 
 public partial class player : Area2D
 {
+    [Signal]
+    public delegate void HitEventHandler();
+
+
     [Export]
     public int speed = 400; // How fast the player will move (pixels/sec).
     public Vector2 ScreenSize; // Size of the game window.
     private AnimatedSprite2D AnimatedSprite;
 
 
+    private void OnBodyEntered(PhysicsBody2D body)
+    {
+        Hide(); // Player disappears after being hit.
+        EmitSignal(SignalName.Hit);
+        // Must be deferred as we can't change physics properties on a physics callback.
+        GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+    }
+
     // Called when the node enters the scene tree for the first time.
-    public override void _Ready() {
+    public override void _Ready()
+    {
+        Hide();
         ScreenSize = GetViewportRect().Size;
         AnimatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
     }
 
-    private Vector2 getMovementInputDirection() {
+    private Vector2 getMovementInputDirection()
+    {
         //SE OBTIENE LA DIRECCION DEL JUGADOR
         //LA CUAL DEPENDE DE LAS TECLAS QUE SE ESTEN PRESIONANDO
         var direction = Vector2.Zero;
@@ -34,7 +49,8 @@ public partial class player : Area2D
         return direction.Normalized();
     } 
 
-    private void updatePositionDuringMovement(Vector2 direction, double delta) {
+    private void updatePositionDuringMovement(Vector2 direction, double delta)
+    {
         //NORMALIZA LA VELOCIDAD, PARA QUE EL JUGADOR NO SE MUEVA MAS RAPIDO EN DIAGONAL
         //Y LUEGO LA MULTIPLICA POR LA VELOCIDAD
         var velocity = direction * speed;
@@ -48,7 +64,8 @@ public partial class player : Area2D
                 );
     }
 
-    public void updateAnimation(Boolean isMoving, Vector2 direction = default(Vector2)) {
+    public void updateAnimation(Boolean isMoving, Vector2 direction = default(Vector2))
+    {
         if(!isMoving) {
             AnimatedSprite.Stop();
             return;
@@ -66,7 +83,8 @@ public partial class player : Area2D
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) {
+    public override void _Process(double delta)
+    {
         //SE OBTIENE LA DIRECCION DEL JUGADOR
         var direction = getMovementInputDirection();
         if(direction.Length() > 0) {
@@ -77,6 +95,13 @@ public partial class player : Area2D
             //SI NO SE ESTA MOVIENDO, SE PARA LA ANIMACION
             updateAnimation(false);
         }
+    }
+
+    public void Start(Vector2 position)
+    {
+        Position = position;
+        Show();
+        GetNode<CollisionShape2D>("CollisionShape2D").Disabled = false;
     }
 }
 
