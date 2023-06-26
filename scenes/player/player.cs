@@ -1,11 +1,12 @@
 using Godot;
 using System;
+using PlayerMovementDirection;
 
 public partial class player : Area2D
 {
     [Signal]
     public delegate void HitEventHandler();
-
+    
 
     [Export]
     public int speed = 400; // How fast the player will move (pixels/sec).
@@ -72,11 +73,11 @@ public partial class player : Area2D
         }
         AnimatedSprite.Play();
         //CAMBIA LA ANIMACION DEPENDIENDO DE LA DIRECCION
-        if(direction.X != 0) {
+        if(direction.X != (float)PLAYER_MOVEMENT_DIRECTION.STOP) {
             AnimatedSprite.Animation = "walk";
             AnimatedSprite.FlipV = false;
             AnimatedSprite.FlipH = direction.X < 0;
-        } else if(direction.Y != 0) {
+        } else if(direction.Y != (float)PLAYER_MOVEMENT_DIRECTION.STOP) {
             AnimatedSprite.Animation = "up";
             AnimatedSprite.FlipV = direction.Y > 0;
         }

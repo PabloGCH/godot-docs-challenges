@@ -1,11 +1,11 @@
 namespace PlayerMovementDirection
 {
-    public enum PlayerMovementDirection
+    public enum PLAYER_MOVEMENT_DIRECTION
     {
-        Stop = 0,
-        Up = 1,
-        Down = 2,
-        Left = 3,
-        Right = 4
+        STOP = 0,
+        UP = 1,
+        DOWN = 2,
+        LEFT = 3,
+        RIGHT = 4
     }
 }
